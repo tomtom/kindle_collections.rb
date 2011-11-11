@@ -69,6 +69,23 @@ An initial configuration file can be created with the following command:
     kindle_collections.rb --print-config > ~/.kindle_collections.yml
 
 
+Collection patterns
+-------------------
+
+Files can also be added to collections based on regular expressions. 
+This can be achieved by adding a `collection_patterns` section to the 
+YAML file.
+
+Example:
+
+    collection_patterns: 
+      news:
+      - ^documents/newsfeeds/lemonde\\.fr/
+      - ^documents/misc/nytimes\\.com/
+      tech:
+      - ^documents/newsfeeds/heise\\.de/
+
+
 Known Problems
 ==============
 
