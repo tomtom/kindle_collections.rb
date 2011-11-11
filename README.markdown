@@ -15,16 +15,16 @@ Collections are defined on basis of the second directory name. Examples:
 <th>Collection</th>
 </tr>
 <tr>
-<td>`documents/filename.ext`</td>
+<td><code>documents/filename.ext</code></td>
 <td>Such a file won't be added to a collection</td>
 </tr>
 <tr>
-<td>`documents/collection/filename.ext`</td>
-<td>`collection`</td>
+<td><code>documents/collection/filename.ext</code></td>
+<td><code>collection</code></td>
 </tr>
 <tr>
-<td>`documents/collection/subdir/filename.ext`</td>
-<td>`collection`</td>
+<td><code>documents/collection/subdir/filename.ext</code></td>
+<td><code>collection</code></td>
 </tr>
 </table>
 
