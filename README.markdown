@@ -80,10 +80,10 @@ Example:
 
     collection_patterns: 
       news:
-      - ^documents/newsfeeds/lemonde\\.fr/
-      - ^documents/misc/nytimes\\.com/
+      - ^documents/newsfeeds/lemonde\.fr/
+      - ^documents/misc/nytimes\.com/
       tech:
-      - ^documents/newsfeeds/heise\\.de/
+      - ^documents/newsfeeds/heise\.de/
 
 
 Known Problems
