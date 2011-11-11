@@ -84,6 +84,8 @@ Example:
       - ^documents/misc/nytimes\.com/
       tech:
       - ^documents/newsfeeds/heise\.de/
+      android:
+      - \bandroid\b
 
 
 Known Problems
