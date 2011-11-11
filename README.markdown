@@ -10,10 +10,10 @@ kindle collections based on the directory structure.
 Collections are defined on basis of the second directory name. Examples:
 
 <table>
-<th>
-<td>Filename</td>
-<td>Collection</td>
-</th>
+<tr>
+<th>Filename</th>
+<th>Collection</th>
+</tr>
 <tr>
 <td>`documents/filename.ext`</td>
 <td>Such a file won't be added to a collection</td>
