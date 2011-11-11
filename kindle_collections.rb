@@ -144,6 +144,10 @@ class KindleCollections
             argv = opts.parse!(args)
             $logger.debug "config: #{config}"
             $logger.debug "argv: #{argv}"
+            if argv.count > 0
+                $logger.fatal "Unused arguments: #{argv.inspect}"
+                exit 5
+            end
             if config['kindle_version'] != 2
                 $logger.fatal "Only kindle version 2 is supported"
                 exit 5
