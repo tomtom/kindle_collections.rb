@@ -4,7 +4,7 @@
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2011-11-11.
 # @Last Change: 2011-11-11.
-# @Revision:    106
+# @Revision:    125
 
 # require ''
 
@@ -210,9 +210,14 @@ class KindleCollections
     def classify_files
         @collections = {}.merge(@config['collections'])
         @files.each do |filename|
-            parts = filename.split(/[\\\/]/)
-            if parts.count > 2
-                collection = "#{parts[1]}@en-US"
+            collection_names = match_filename(filename)
+            if collection_names.empty?
+                parts = filename.split(/[\\\/]/)
+                if parts.count > 2
+                    collection_names << "#{parts[1]}@en-US"
+                end
+            end
+            for collection in collection_names
                 @collections[collection] ||= {'items' => []}
                 id = if filename =~ /^.*?-asin_([a-zA-Z0-9_]+)-type_([a-zA-Z0-9_]+)-v_([0-9]+)\.([^[:space:].]+)$/
                          "##{$1}^#{$2}"
@@ -224,6 +229,31 @@ class KindleCollections
             end
         end
         $logger.info "Collections: #{@collections.count}"
+    end
+
+    def match_filename(filename)
+        collection_names = []
+        unclassified = nil
+        $logger.debug "Match filename: #{filename}"
+        for collection, patterns in @config['collection_patterns']
+            $logger.debug "Match patterns (#{collection}): #{patterns.join(", ")}"
+            for pattern in patterns
+                case pattern
+                when :else
+                    unclassified = collection
+                else
+                    if filename =~ Regexp.new(pattern)
+                        collection_names << collection
+                        break
+                    end
+                end
+            end
+        end
+        if collection_names.empty? and ! unclassified.nil?
+            collection_names << unclassified
+        end
+        $logger.debug "Add #{filename.inspect} to: #{collection_names.join(", ")}" unless collection_names.empty?
+        return collection_names
     end
 
     def write_json
