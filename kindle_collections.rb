@@ -74,6 +74,7 @@ class KindleCollections
             config['json'] = ''
             config['rx'] = /\.(azw|mobi|txt|pdf)$/
             config['kindle_version'] = 2
+            config['collection_patterns'] = {}
             CONFIGS.each do |file|
                 begin
                     config.merge!(YAML.load_file(file))
@@ -82,7 +83,7 @@ class KindleCollections
                 end
             end
             opts = OptionParser.new do |opts|
-                opts.banner =  "Usage: #{File.basename($0)} [OPTIONS]<+CURSOR+>"
+                opts.banner =  "Usage: #{File.basename($0)} [OPTIONS]"
                 opts.separator ' '
                 opts.separator 'kindle_collections.rb is a free software with ABSOLUTELY NO WARRANTY under'
                 opts.separator 'the terms of the GNU General Public License version 2 or newer.'
