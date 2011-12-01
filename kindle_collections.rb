@@ -4,7 +4,7 @@
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2011-11-11.
 # @Last Change: 2011-12-01.
-# @Revision:    127
+# @Revision:    151
 
 # require ''
 
@@ -114,6 +114,10 @@ class KindleCollections
                     exit
                 end
 
+                opts.on('--print-collections [COLLECTION REGEXP]', 'Print the collections for debugging purposes and exit') do |rx|
+                    config['print-collections'] = rx
+                end
+
                 opts.on('--print-diff JSON', String, 'Print entries in a JSON file that are not included in a current scan') do |value|
                     config['print-diff'] = value
                 end
@@ -180,6 +184,7 @@ class KindleCollections
         @args   = args
         @files  = []
         @collections = {}
+        @ids = {}
     end
 
     def process
@@ -187,6 +192,8 @@ class KindleCollections
         classify_files
         if @config.has_key?('print-diff')
             print_diff
+        elsif @config.has_key?('print-collections')
+            print_colls
         else
             write_json
         end
@@ -212,22 +219,25 @@ class KindleCollections
     def classify_files
         @collections = {}.merge(@config['collections'])
         @files.each do |filename|
-            collection_names = match_filename(filename)
-            if collection_names.empty?
-                parts = filename.split(/[\\\/]/)
-                if parts.count > 2
-                    collection_names << "#{parts[1]}@#{@config['locale']}"
+            unless File.directory?(filename)
+                collection_names = match_filename(filename)
+                if collection_names.empty?
+                    parts = filename.split(/[\\\/]/)
+                    if parts.count > 2
+                        collection_names << "#{parts[1]}@#{@config['locale']}"
+                    end
                 end
-            end
-            for collection in collection_names
-                @collections[collection] ||= {'items' => []}
-                id = if filename =~ /^.*?-asin_([a-zA-Z0-9_]+)-type_([a-zA-Z0-9_]+)-v_([0-9]+)\.([^[:space:].]+)$/
-                         "##{$1}^#{$2}"
-                     else
-                         "*#{Digest::SHA1.hexdigest("/mnt/us/#{filename}")}"
-                     end
-                $logger.debug "#{filename} :: #{collection} << #{id}"
-                @collections[collection]['items'] << id
+                for collection in collection_names
+                    @collections[collection] ||= {'items' => []}
+                    id = if filename =~ /^.*?-asin_([a-zA-Z0-9_]+)-type_([a-zA-Z0-9_]+)-v_([0-9]+)\.([^[:space:].]+)$/
+                             "##{$1}^#{$2}"
+                         else
+                             "*#{Digest::SHA1.hexdigest("/mnt/us/#{filename}")}"
+                         end
+                    $logger.debug "#{filename} :: #{collection} << #{id}"
+                    @collections[collection]['items'] << id
+                    @ids[id] = filename
+                end
             end
         end
         $logger.info "Collections: #{@collections.count}"
@@ -270,6 +280,22 @@ class KindleCollections
         $logger.warn "Write #{collections_json}"
         File.open(collections_json, "w") {|f| f.print serialized}
         $logger.warn "You have to hard reset the kindle for the changes to take effect!"
+    end
+
+    def print_colls
+        rx = @config['print-collections'].nil? ? nil : Regexp.new(@config['print-collections'])
+        for collection, vals in @collections
+            if rx.nil? or collection =~ rx
+                hd = "Collection: #{collection}"
+                puts hd
+                puts ("=" * hd.length)
+                for id in vals['items']
+                    filename = @ids[id] || "[PRE-CONFIGURED ENTRY: #{id}]"
+                    puts "    - #{filename}"
+                end
+                puts
+            end
+        end
     end
 
     def print_diff
