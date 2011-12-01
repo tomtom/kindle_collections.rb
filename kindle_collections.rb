@@ -215,7 +215,7 @@ class KindleCollections
             if collection_names.empty?
                 parts = filename.split(/[\\\/]/)
                 if parts.count > 2
-                    collection_names << "#{parts[1]}@en-US"
+                    collection_names << "#{parts[1]}@#{@config['locale']}"
                 end
             end
             for collection in collection_names
@@ -244,7 +244,7 @@ class KindleCollections
                     unclassified = collection
                 else
                     if filename =~ Regexp.new(pattern)
-                        collection_names << collection
+                        collection_names << "#{collection}@#{@config['locale']}"
                         break
                     end
                 end
