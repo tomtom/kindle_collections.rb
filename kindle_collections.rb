@@ -200,11 +200,12 @@ class KindleCollections
                 if File.directory?(subdir)
                     pattern = File.join(subdir, '**', '*')
                     $logger.debug "Use pattern: #{pattern}"
-                    @files += Dir[pattern]
+                    files = Dir[pattern]
+                    files.delete_if {|filename| File.directory?(filename) || filename !~ @config['rx']}
+                    @files += files
                 end
             end
         end
-        @files.delete_if {|filename| filename !~ @config['rx']}
         $logger.debug @files.inspect
     end
 
