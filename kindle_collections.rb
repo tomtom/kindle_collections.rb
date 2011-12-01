@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2011-11-11.
-# @Last Change: 2011-11-11.
-# @Revision:    125
+# @Last Change: 2011-12-01.
+# @Revision:    127
 
 # require ''
 
@@ -72,6 +72,7 @@ class KindleCollections
             config['subdirs'] = ['documents']
             config['collections'] = {}
             config['json'] = ''
+            config['locale'] = 'en-US'
             config['rx'] = /\.(azw|mobi|txt|pdf)$/
             config['kindle_version'] = 2
             config['collection_patterns'] = {}
