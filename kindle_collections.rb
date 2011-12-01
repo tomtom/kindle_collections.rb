@@ -4,7 +4,7 @@
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2011-11-11.
 # @Last Change: 2011-12-01.
-# @Revision:    151
+# @Revision:    152
 
 # require ''
 
@@ -201,6 +201,10 @@ class KindleCollections
 
     def collect_files
         @files  = []
+        file_rx = @config['rx']
+        if !file_rx.kind_of?(Regexp)
+            file_rx = Regexp.new(file_rx)
+        end
         FileUtils.cd(@config['dir']) do
             for subdir in @config['subdirs']
                 $logger.debug "Scan subdir: #{subdir}"
@@ -208,7 +212,7 @@ class KindleCollections
                     pattern = File.join(subdir, '**', '*')
                     $logger.debug "Use pattern: #{pattern}"
                     files = Dir[pattern]
-                    files.delete_if {|filename| File.directory?(filename) || filename !~ @config['rx']}
+                    files.delete_if {|filename| File.directory?(filename) || filename !~ file_rx}
                     @files += files
                 end
             end
