@@ -4,7 +4,7 @@
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2011-11-11.
 # @Last Change: 2012-01-23.
-# @Revision:    156
+# @Revision:    158
 
 # require ''
 
@@ -190,6 +190,7 @@ class KindleCollections
     end
 
     def process
+        read_collections_json
         collect_files
         classify_files
         if @config.has_key?('print-diff')
@@ -292,13 +293,13 @@ class KindleCollections
     def write_json
         serialized = @collections.to_json
         $logger.debug "JSON: #{serialized}"
-        if File.exists?(collections_json)
+        if File.exists?(@collections_json)
             collections_bak = File.join(@config['dir'], 'system', "collections_bak_#{Time.now.strftime("%Y-%m-%d")}.json")
             $logger.info "Backup collections.json to #{collections_bak}"
-            File.rename(collections_json, collections_bak)
+            File.rename(@collections_json, collections_bak)
         end
-        $logger.warn "Write #{collections_json}"
-        File.open(collections_json, "w") {|f| f.print serialized}
+        $logger.warn "Write #{@collections_json}"
+        File.open(@collections_json, "w") {|f| f.print serialized}
         $logger.warn "You have to hard reset the kindle for the changes to take effect!"
     end
 
