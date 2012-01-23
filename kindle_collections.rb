@@ -3,8 +3,8 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2011-11-11.
-# @Last Change: 2011-12-01.
-# @Revision:    152
+# @Last Change: 2012-01-23.
+# @Revision:    156
 
 # require ''
 
@@ -184,6 +184,8 @@ class KindleCollections
         @args   = args
         @files  = []
         @collections = {}
+        @collections_json = ''
+        @collections_old = {}
         @ids = {}
     end
 
@@ -220,6 +222,14 @@ class KindleCollections
         $logger.debug @files.inspect
     end
 
+    def read_collections_json
+        @collections_json = File.join(@config['dir'], 'system', 'collections.json')
+        if File.exists?(@collections_json)
+            json = File.read(@collections_json)
+            @collections_old = JSON.parse(json)
+        end
+    end
+
     def classify_files
         @collections = {}.merge(@config['collections'])
         @files.each do |filename|
@@ -233,6 +243,13 @@ class KindleCollections
                 end
                 for collection in collection_names
                     @collections[collection] ||= {'items' => []}
+                    if @collections_old.has_key?(collection)
+                        old_collection = @collections_old[collection]
+                        if old_collection.has_key?('lastAccess')
+                            last_access = @collections[collection]['lastAccess'] = old_collection['lastAccess']
+                            $logger.debug "Collection #{collection}: Last access: #{last_access}"
+                        end
+                    end
                     id = if filename =~ /^.*?-asin_([a-zA-Z0-9_]+)-type_([a-zA-Z0-9_]+)-v_([0-9]+)\.([^[:space:].]+)$/
                              "##{$1}^#{$2}"
                          else
@@ -275,7 +292,6 @@ class KindleCollections
     def write_json
         serialized = @collections.to_json
         $logger.debug "JSON: #{serialized}"
-        collections_json = File.join(@config['dir'], 'system', 'collections.json')
         if File.exists?(collections_json)
             collections_bak = File.join(@config['dir'], 'system', "collections_bak_#{Time.now.strftime("%Y-%m-%d")}.json")
             $logger.info "Backup collections.json to #{collections_bak}"
