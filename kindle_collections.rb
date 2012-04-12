@@ -3,16 +3,18 @@
 # @Author:      Tom Link (micathom AT gmail com)
 # @License:     GPL (see http://www.gnu.org/licenses/gpl.txt)
 # @Created:     2011-11-11.
-# @Last Change: 2012-01-23.
-# @Revision:    158
+# @Last Change: 2012-04-12.
+# @Revision:    160
 
 # require ''
 
-require 'optparse'
-require 'fileutils'
-require 'rbconfig'
-require 'logger'
 require 'digest/sha1'
+require 'fileutils'
+require 'logger'
+require 'optparse'
+require 'rbconfig'
+require 'yaml'
+
 if RUBY_VERSION =~ /^1\.8/
     require 'rubygems'
     require 'json/pure'
